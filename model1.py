@@ -21,13 +21,32 @@ from sklearn.linear_model import LogisticRegression
 def train():
     start = time.time()
     traindf = pandas.read_json('train.json')
-    traindf['ingredients_clean_string'] = [' '.join(z).strip() for z in traindf['ingredients']]  
-    traindf['ingredients_string'] = [' '.join([WordNetLemmatizer().lemmatize(re.sub('[^A-Za-z]', ' ', line)) for line in lists]).strip() for lists in traindf['ingredients']]       
-    traindf[['id' , 'cuisine' ]].to_csv('test_submission.csv', encoding='utf-8')
+    # make clean ingredients string
+    traindf['ingredients_clean_string'] = [' '.join(z).strip() 
+                                            for z in traindf['ingredients']]  
+    traindf['ingredients_string'] = [
+        ' '.join([
+            WordNetLemmatizer().lemmatize(
+                re.sub('[^A-Za-z]',
+                ' ',
+                line))
+                for line in lists]).strip()
+                    for lists in traindf['ingredients']]       
+    traindf[['id' , 'cuisine' ]].to_csv(
+                                    'test_submission.csv',
+                                    encoding='utf-8'
+                                    )
 
     testdf = pandas.read_json('test1.json')
-    testdf['ingredients_clean_string'] = [' '.join(z).strip() for z in testdf['ingredients']]
-    testdf['ingredients_string'] = [' '.join([WordNetLemmatizer().lemmatize(re.sub('[^A-Za-z]', ' ', line)) for line in lists]).strip() for lists in testdf['ingredients']]       
+    testdf['ingredients_clean_string'] = [' '.join(z).strip() 
+                                            for z in testdf['ingredients']]
+    testdf['ingredients_string'] = [
+        ' '.join([WordNetLemmatizer().lemmatize(re.sub(
+            '[^A-Za-z]',
+            ' ',
+            line)) 
+                for line in lists]).strip() 
+                    for lists in testdf['ingredients']]       
 
     corpustr = traindf['ingredients_string']
     vectorizertr = TfidfVectorizer(
