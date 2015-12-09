@@ -79,7 +79,10 @@ def train():
     # tar_train.shape
     # tar_test.shape
     # classifier=RandomForestClassifier(random_state=1, criterion = 'gini', n_estimators=75)
-    classifier = LinearSVC(random_state=1, C=0.4, penalty='l2', dual=False)
+    classifier = LinearSVC(
+                        random_state=1,
+                        C=0.4, penalty='l2',
+                        dual=False)
     # classifier = LogisticRegression(random_state=1, C=7)
     classifier = classifier.fit(predictors_tr, targets_tr)
     print time.time() - start
@@ -90,14 +93,20 @@ def train():
     # print testdf
     print time.time() - start
 
-    testdf[['id' , 'cuisine' ]].to_csv('submission11.csv', encoding='utf-8', index=False)
+    testdf[['id' , 'cuisine' ]].to_csv('submission11.csv',
+                                        encoding='utf-8',
+                                        index=False)
 
     # resultdf = pandas.read_csv('sample_submission.csv')
     # resultdf = resultdf.sort_values('id', ascending=True)
 
     # sklearn.metrics.confusion_matrix(targets_ts,predictions)
     # print sklearn.metrics.accuracy_score(testdf['cuisine'], resultdf['cuisine'])
-    scores = cross_validation.cross_val_score(classifier, predictors_tr,targets_tr, cv=3, scoring='accuracy')
+    scores = cross_validation.cross_val_score(classifier,
+                                              predictors_tr,
+                                              targets_tr,
+                                              cv=3,
+                                              scoring='accuracy')
     print scores
     print "Accuracy: %0.4f (+/- %0.5f)" % (scores.mean(), scores.std())
     print time.time() - start
