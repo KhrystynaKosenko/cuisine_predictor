@@ -140,27 +140,28 @@ if __name__ == "__main__":
 
 
     # Run for a variety of regularization strengths
-    alphas = [0, .001, .01, .1, 2]
-    for j, a in enumerate(alphas):
+
+    # alphas = [0, .001, .01, .1, 2]
+    # for j, a in enumerate(alphas):
         
-        # Create a new learner, but use the same data for each run
+        # Create a new learner
         # Take only first 25 rows
-        lr = LogisticRegressionCA(
+    lr = LogisticRegressionCA(
             x_train=predictors_tr[:25, :].todense(), 
             y_train=targets_tr[:25],
             x_test=predictors_ts[:25, :].todense(),
             alpha=0.01)
      
-        print "Initial likelihood:"
-        print lr.lik(lr.betas)
-         
-        # Train the model
-        lr.train()
-         
-        # Display execution info
-        print 'Final betas:'
-        print lr.betas
-        print 'Final lik:'
-        print lr.lik(lr.betas)
-        print 'Prediction:'
-        print lr.test_predictions()
+    print "Initial likelihood:"
+    print lr.lik(lr.betas)
+     
+    # Train the model
+    lr.train()
+     
+    # Display execution info
+    print 'Final betas:'
+    print lr.betas
+    print 'Final lik:'
+    print lr.lik(lr.betas)
+    print 'Prediction:'
+    print lr.test_predictions()
