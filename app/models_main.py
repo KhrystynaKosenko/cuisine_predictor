@@ -178,6 +178,11 @@ class Classifiers(object):
     def set_classifiers(self):
         ''' Define classifier object and add them
             to the list of classifiers.
+
+        Results
+        -------
+        self.clf : list with object
+            Update classifier object in self.clf list
         '''
         classifier1 = RandomForestClassifier(
             random_state=1, criterion = 'gini', n_estimators=75
@@ -247,6 +252,18 @@ class Classifiers(object):
             self.pred.append(classifier.predict(features_matrix))
 
 def main_train():
+    ''' Generate main train data object.
+        Train models on this data.
+
+    Returns
+    -------
+    data : Pandas DataFrame, [m rows x n columns]
+        Train or test data.
+        Example in 'get' method description.
+
+    clf : list
+        List of classifiers objects in 'clf'
+    '''
     data = SourceOrganizer()
     data.get(source='train')
     data.lemmatize_ingredients(data.train_data, source='train')
@@ -259,6 +276,17 @@ def main_train():
 
 def make_json(string):
     ''' Make json-like string for input in vectorizer method.
+        
+    Parameters
+    ----------
+    string : string
+        String with words separated by 
+        comma and space ', '.
+
+    Returns
+    -------
+    result : string
+        example:
         [
           {
             "id": 10259,
