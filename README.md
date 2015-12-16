@@ -1,1 +1,2 @@
-Machine Learning model for prediction recipts cuisine
+Machine Learning model for prediction
+national cuisine by recipe ingredients.
