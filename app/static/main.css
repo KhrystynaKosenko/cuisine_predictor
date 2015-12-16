@@ -1,0 +1,29 @@
+b {
+    font-size: 10px;
+}
+
+p {
+    font-size: 20px;
+}
+
+body {
+    background: url("background.jpg");
+    background-size: cover;
+    /*background-size: 100% 200%;*/
+    background-repeat: no-repeat center center fixed;
+    /*height: 100%;*/
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+         body {
+           background: url('mobilebackground.png') no-repeat center center fixed;
+           background-size: cover;
+           height: 100%;
+         }
+         b {
+            font-size: 10px;
+         }
+         p {
+            font-size: 18px;
+         }
+}

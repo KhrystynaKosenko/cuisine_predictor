@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% extends "index.html" %}
+<!-- {% import "bootstrap/wtf.html" as wtf %} -->
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<body>
+<div class="container" style="padding-left: 8.3%; padding-top: 15%;">
+    <H3>Model: result</H3>
+    <b class="1">***********************************</b>
+    {% for model, result in results %}
+    <p class="2">
+        {{ model }}: {{ result[0]}}
+    </p>
+    {% endfor %}
+    <a href="/index">Back</a>
+</div>
+{% endblock %}
+

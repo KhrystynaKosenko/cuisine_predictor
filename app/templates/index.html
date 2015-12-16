@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.png') }}"
+            type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'favicon.png') }}"
+            type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'main.css') }}">
+{% endblock %}
+
+{% block content %}
+<body>
+<div class="container" style="padding-left: 8.3%; padding-top: 15%;">
+    <H3>Honey, what's cooking?</H3>
+    <form action="" method=post>
+       {{form.hidden_tag()}}
+       <dl>
+          <dt>List of ingredients:
+          <dd>{{ form.body(cols="31", rows="5") }}
+          <dd>{{ form.submit }}<span style="padding: 4%;">{{ form.random }}</span>
+       </dl>
+    </form>
+</div>
+{% endblock %}
+

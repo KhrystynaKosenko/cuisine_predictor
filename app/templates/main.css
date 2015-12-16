@@ -1,0 +1,5 @@
+body {
+    background: url("static/background.jpg");
+    background-size: 80px 60px;
+    background-repeat: no-repeat;
+}
