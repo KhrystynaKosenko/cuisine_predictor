@@ -32,7 +32,10 @@ from sklearn.linear_model import SGDClassifier
 
 def train():
     start = time.time()
-    traindf = pandas.read_json('train.json')
+    traindf = pandas.read_json('app/static/data/input/train.json')
+    print 'ing', traindf['ingredients'][0], traindf.shape
+    print ', '.join(traindf['ingredients'][0])
+    exit()
     # print traindf, type(traindf)
     # exit()
     print 'open train.json: ', time.time() - start
