@@ -60,9 +60,10 @@ class SourceOrganizer(object):
         data_file_name = self.folder + source + '.json'
         if source == 'train':
             self.train_data = pd.read_json(data_file_name)
+            # self._vocabulary()
         self.test_data = pd.read_json(data_file_name)
 
-    def lemmatize_ingredients(self, data, source='train'):
+    def lemmatize_ingredients(self, source='train'):
         ''' Lemmatize ingredients in data object string using
             WordNet's built-in morphy function.
             Input string word will be unchanged 
@@ -100,14 +101,14 @@ class SourceOrganizer(object):
                 ' '.join([lemma(clean(word)) for word in line]).strip()
                                         for line in self.train_data[ing]
                 ]
-            self._vocabulary()
+            # self._vocabulary()
         self.test_data[ing_ls] = [
             ' '.join([lemma(clean(word)) for word in line]).strip()
                                     for line in self.test_data[ing]
             ]
 
 
-    def vectorize_ingredients(self, data):
+    def vectorize_ingredients(self, data_train, data_test=None):
         ''' Use TfidfVectorizer to learn the vocabulary
             dictionary(in our case ingredients) and
             return term-document matrix.
@@ -123,7 +124,11 @@ class SourceOrganizer(object):
         matrix : array, [n_samples, n_features]
             Document-term matrix.
         '''
-        corpus = data['ingredients_string']
+        corpus_train = data_train['ingredients_string']
+        try:
+            corpus_test = data_test['ingredients_string']
+        except:
+            pass
         vectorizer = TfidfVectorizer(
                                 stop_words='english',
                                 ngram_range=(1, 1),
@@ -132,10 +137,16 @@ class SourceOrganizer(object):
                                 binary=False,
                                 token_pattern=r'\w+',
                                 sublinear_tf=False,
-                                norm='l2',
-                                vocabulary=self.vocabulary)
-        matrix = vectorizer.fit_transform(corpus)
-        return matrix
+                                norm='l2')#,
+                                # vocabulary=self.vocabulary)
+        
+        matrix_train = vectorizer.fit_transform(corpus_train)
+        try:
+            matrix_test = vectorizer.transform(corpus_test)
+        except:
+            return matrix_train
+
+        return matrix_train, matrix_test
 
     def _vocabulary(self):
         ''' Take ingredients data from 'self.train_data'
@@ -187,8 +198,19 @@ class Classifiers(object):
         classifier1 = RandomForestClassifier(
             random_state=1, criterion = 'gini', n_estimators=75
             )
+        self.classifier2 = LinearSVC(
+            random_state=1, C=0.4, penalty='l2', dual=False
+            )
         classifier2 = LinearSVC(
             random_state=1, C=0.4, penalty='l2', dual=False
+            )
+
+        self.classifier3 = SGDClassifier(
+            alpha=0.00001, average=False, class_weight=None, epsilon=0.1,
+            eta0=0.0, fit_intercept=True, l1_ratio=0.15,
+            learning_rate='optimal', loss='hinge', n_iter=5, n_jobs=1,
+            penalty='l2', power_t=0.5, random_state=None, shuffle=True,
+            verbose=0, warm_start=False
             )
         classifier3 = SGDClassifier(
             alpha=0.00001, average=False, class_weight=None, epsilon=0.1,
@@ -249,7 +271,8 @@ class Classifiers(object):
             Prediction is target vector relative to X.        
         '''
         for classifier in self.clf:
-            self.pred.append(classifier.predict(features_matrix))
+            prediction = classifier.predict(features_matrix)
+            self.pred.append(prediction)
 
 def main_train():
     ''' Generate main train data object.
@@ -266,7 +289,7 @@ def main_train():
     '''
     data = SourceOrganizer()
     data.get(source='train')
-    data.lemmatize_ingredients(data.train_data, source='train')
+    data.lemmatize_ingredients(source='train')
     matrix_train = data.vectorize_ingredients(data.train_data)
     targets_train = data.train_data['cuisine']
     clf = Classifiers()
@@ -313,20 +336,72 @@ def make_json(string):
     return result
 
 if __name__ == '__main__':
-    bar = 'green chile, jalapeno chilies, onions, ground black pepper, \
-      salt, chopped cilantro fresh, green bell pepper, \
-      garlic, white sugar, roma tomatoes, celery, dried oregano'
-    foo = make_json(bar)
+    # bar = 'green chile, jalapeno chilies, onions, ground black pepper, \
+    #   salt, chopped cilantro fresh, green bell pepper, \
+    #   garlic, white sugar, roma tomatoes, celery, dried oregano'
+    # bar1 = 'baking powder, eggs, all-purpose flour, raisins, milk, white sugar'
     data, clf = main_train()
-    # data.get(source='test')
-    data.test_data = pd.read_json(foo)
-    print data.test_data
-    data.lemmatize_ingredients(data.test_data, source='test')
-    matrix_test = data.vectorize_ingredients(data.test_data)
-    print clf.clf
-    print clf.clf
-    clf.predictions(matrix_test)
-    for x in clf.pred:
-        print x[0]
-    print clf.pred[1]
-    print 'Done'
+    while True:
+        bar1 = raw_input('>')
+        foo = make_json(bar1)
+        # clf = Classifiers()
+        # clf.set_classifiers()
+        # data = SourceOrganizer()
+        # data.get(source='train')
+        # data.get(source='test2')
+        data.test_data = pd.read_json(foo)
+        print data.test_data
+    ##    data.lemmatize_ingredients(source='train')
+
+        # data.train_data['ingredients_string'] = [' '.join([WordNetLemmatizer().lemmatize(re.sub('[^A-Za-z]', ' ', line)) for line in lists]).strip()
+        #                 for lists in data.train_data['ingredients']]
+
+        # vectorizer = TfidfVectorizer(
+        #                         stop_words='english',
+        #                         ngram_range=(1, 1),
+        #                         analyzer='word',
+        #                         max_df=0.57,
+        #                         binary=False,
+        #                         token_pattern=r'\w+',
+        #                         sublinear_tf=False,
+        #                         norm='l2')#,
+        #                         # vocabulary=self.vocabulary)
+        # matrix_train = vectorizer.fit_transform(data.train_data['ingredients_string'])
+
+    ##    matrix_train = data.vectorize_ingredients(data.train_data)
+    ##    targets_train = data.train_data['cuisine']
+        data.lemmatize_ingredients(source='test')
+        # data.test_data['ingredients_string'] = [' '.join([WordNetLemmatizer().lemmatize(re.sub('[^A-Za-z]', ' ', line)) for line in lists]).strip()
+        #                 for lists in data.test_data['ingredients']]
+
+
+        matrix_test = data.vectorize_ingredients(data.train_data, data.test_data)[1]
+
+        # matrix_test = vectorizer.transform(data.test_data['ingredients_string'])
+
+        # classifier2 = LinearSVC(
+        #     random_state=1, C=0.4, penalty='l2', dual=False
+        #     )
+        # classifier3 = SGDClassifier(
+        #     alpha=0.00001, average=False, class_weight=None, epsilon=0.1,
+        #     eta0=0.0, fit_intercept=True, l1_ratio=0.15,
+        #     learning_rate='optimal', loss='hinge', n_iter=5, n_jobs=1,
+        #     penalty='l2', power_t=0.5, random_state=None, shuffle=True,
+        #     verbose=0, warm_start=False
+        #     )
+
+        # classifier2 = classifier2.fit(matrix_train, targets_train)
+        # classifier3 = classifier3.fit(matrix_train, targets_train)
+
+    ##    clf.fit_classifiers(matrix_train, targets_train)
+        # print clf.clf
+        # print clf.clf
+        clf.predictions(matrix_test)
+        # pred2 = classifier2.predict(matrix_test)
+        # pred3 = classifier3.predict(matrix_test)
+        # print pred2
+        # print pred3
+        for x in clf.pred:
+            print x
+        # print clf.pred
+        print 'Done'

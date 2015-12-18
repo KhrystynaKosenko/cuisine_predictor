@@ -1,5 +1,6 @@
 import pandas as pd
 import random
+
 from flask import render_template
 from flask import redirect
 from flask import request
@@ -29,11 +30,13 @@ def index():
             if body:    
                 data.test_data = pd.read_json(make_json(body))
                 print data.test_data
-                data.lemmatize_ingredients(data.test_data, source='test')
-                matrix_test = data.vectorize_ingredients(data.test_data)
+                data.lemmatize_ingredients(source='test')
+                matrix_test = data.vectorize_ingredients(data.train_data,
+                                                        data.test_data)[1]
                 del data.test_data
                 clf.predictions(matrix_test)
                 results_list = zip(clf.models, clf.pred)
+                clf.pred = []
                 return render_template('results.html', results=results_list)
         elif 'random' in request.form:
             index = random.randint(1, random_ing.shape[0])
