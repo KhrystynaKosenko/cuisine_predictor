@@ -1,6 +1,8 @@
 .git
 .env
 .Python
+.pyc
+.DS_Store
 /lib
 /local
 /bin
